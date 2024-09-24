@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Resource Monitor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a202c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+        }
+        .monitor {
+            background-color: black;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 48rem;
+        }
+        .header {
+            background-image: linear-gradient(to right, #2d3748, #1a202c);
+            padding: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+        }
+        .title {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn {
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .btn:hover {
+            color: white;
+        }
+        .texture {
+            height: 0.5rem;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMjIyIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDVMNSAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=');
+        }
+        .content {
+            transition: height 0.3s ease-in-out, padding 0.3s ease-in-out;
+            height: auto;
+            padding: 1.5rem;
+            overflow: hidden;
+        }
+        .minimized {
+            height: 0;
+            padding: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            justify-items: center;
+        }
+        .gauge {
+            width: 8rem;
+            height: 8rem;
+            position: relative;
+        }
+        .gauge svg {
+            width: 100%;
+        }
+        .gauge-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -25%);
+            text-align: center;
+        }
+        .gauge-percentage {
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: color 0.5s;
+        }
+        .gauge-label {
+            font-size: 0.75rem;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="monitor">
+        <div class="header">
+            <div class="title">Computer Resource Monitor</div>
+            <div class="buttons">
+                <button class="btn" id="minimizeBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+                <button class="btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+        <div class="texture"></div>
+        <div class="content" id="content">
+            <div class="grid">
+                <div class="gauge" id="cpu-gauge">
+                    <svg viewBox="0 0 100 50">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#333" />
+                                <stop offset="50%" stop-color="#666" />
+                                <stop offset="100%" stop-color="#333" />
+                            </linearGradient>
+                            <pattern id="pattern" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                                <path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" stroke="#444" stroke-width="1" />
+                            </pattern>
+                        </defs>
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#gradient)" stroke-width="10" />
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#pattern)" stroke-width="10" class="gauge-bar" />
+                    </svg>
+                    <div class="gauge-value">
+                        <div class="gauge-percentage">0%</div>
+                        <div class="gauge-label">CPU</div>
+                    </div>
+                </div>
+                <div class="gauge" id="gpu-gauge">
+                    <svg viewBox="0 0 100 50">
+                        <use href="#gradient" />
+                        <use href="#pattern" />
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#gradient)" stroke-width="10" />
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#pattern)" stroke-width="10" class="gauge-bar" />
+                    </svg>
+                    <div class="gauge-value">
+                        <div class="gauge-percentage">0%</div>
+                        <div class="gauge-label">GPU</div>
+                    </div>
+                </div>
+                <div class="gauge" id="ram-gauge">
+                    <svg viewBox="0 0 100 50">
+                        <use href="#gradient" />
+                        <use href="#pattern" />
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#gradient)" stroke-width="10" />
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#pattern)" stroke-width="10" class="gauge-bar" />
+                    </svg>
+                    <div class="gauge-value">
+                        <div class="gauge-percentage">0%</div>
+                        <div class="gauge-label">RAM</div>
+                    </div>
+                </div>
+                <div class="gauge" id="disk-gauge">
+                    <svg viewBox="0 0 100 50">
+                        <use href="#gradient" />
+                        <use href="#pattern" />
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#gradient)" stroke-width="10" />
+                        <path d="M 5 50 A 45 45 0 0 1 95 50" fill="none" stroke="url(#pattern)" stroke-width="10" class="gauge-bar" />
+                    </svg>
+                    <div class="gauge-value">
+                        <div class="gauge-percentage">0%</div>
+                        <div class="gauge-label">DISK</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const gauges = {
+            cpu: document.getElementById('cpu-gauge'),
+            gpu: document.getElementById('gpu-gauge'),
+            ram: document.getElementById('ram-gauge'),
+            disk: document.getElementById('disk-gauge')
+        };
+
+        function updateGauge(gauge, value) {
+            const bar = gauge.querySelector('.gauge-bar');
+            const percentage = gauge.querySelector('.gauge-percentage');
+            const angle = (value / 100) * 180;
+            const dashOffset = 141.37 - (angle / 180) * 141.37;
+
+            bar.style.strokeDasharray = '141.37';
+            bar.style.strokeDashoffset = dashOffset;
+            bar.style.transition = 'stroke-dashoffset 0.5s ease-in-out';
+
+            if (value > 90) {
+                bar.style.stroke = '#f56565';
+                percentage.style.color = '#f56565';
+            } else {
+                bar.style.stroke = 'white';
+                percentage.style.color = 'white';
+            }
+
+            percentage.textContent = `${Math.round(value)}%`;
+            console.log(`Updated ${gauge.id} to ${value}%`);
+        }
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            socket.emit('request_update');
+        });
+
+        socket.on('system_info', (data) => {
+            console.log('Received system info:', data);
+            const systemInfo = JSON.parse(data);
+            for (const [key, value] of Object.entries(systemInfo)) {
+                if (gauges[key]) {
+                    updateGauge(gauges[key], value);
+                }
+            }
+        });
+
+        const minimizeBtn = document.getElementById('minimizeBtn');
+        const content = document.getElementById('content');
+
+        minimizeBtn.addEventListener('click', () => {
+            content.classList.toggle('minimized');
+        });
+    </script>
+</body>
+</html>
